@@ -7,9 +7,7 @@ package pyramidPkg;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -20,9 +18,8 @@ public class PyramidDAO {
     public PyramidDAO() {
     }
     
-    public List<Pyramid> readPyramidsFromCSV(String fileName){
-        List<Pyramid> pyramids= new ArrayList<>();
-        try{
+    public List<Pyramid> readPyramidsFromCSV(String fileName) throws Exception {
+            List<Pyramid> pyramids= new ArrayList<>();
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line = br.readLine();
             
@@ -33,18 +30,14 @@ public class PyramidDAO {
             while(line != null){
                 String[] attributes = line.split(",");
                 Pyramid pyr = createPyramid(attributes);
-                
                 pyramids.add(pyr);
                 
                 line = br.readLine();
             }  
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }
-    return pyramids;
+            return pyramids;
     }
     
-    public  Pyramid createPyramid(String[] attributes) {
+    public  Pyramid createPyramid(String[] attributes) throws Exception {
         
         String pharaoh = attributes[0];
         String modern_name = attributes[2];
@@ -55,8 +48,30 @@ public class PyramidDAO {
     }
         
         return new Pyramid(pharaoh , modern_name , site , height);
-        
-        
     }
+    
+    
+    public Map<String,Integer> site_count(List<Pyramid> pyramids){
+        Map<String,Integer> sites = new HashMap<>();
+        
+        for(Pyramid p:pyramids) 
+        {
+                if(sites.get(p.site)==null) {
+                    sites.put(p.site,1);
+                }else {
+                    sites.put(p.site,sites.get(p.site)+1);
+                }
+        }
+
+		return sites;
+    }
+    
+    public List<Pyramid> sort(List<Pyramid> pyramids)
+    {
+        Collections.sort(pyramids,new HeightCompare());
+        return pyramids;
+    }
+    
+    
     
 }
